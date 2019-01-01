@@ -1,2 +1,5 @@
-﻿  Camera.cpp
+﻿  Cloth.cpp
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(96): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(129): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(131): warning C4018: '<': signed/unsigned mismatch
   ClothSim.vcxproj -> D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe

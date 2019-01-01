@@ -26,6 +26,11 @@ GLuint LIT_SHADER;
 CCloth* Cloth;
 CCamera* Camera;
 
+/*DeltaTime*/
+double dT;
+double oldTime;
+double newTime;
+
 void Shutdown()
 {
 	glfwTerminate();
@@ -94,7 +99,7 @@ bool OnGameplayBegin()
 	CShaderLoader ShaderLoader;
 	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/flat.vs", "Assets/Shaders/flat.fs");
 
-	Cloth = new CCloth(6, 2); //64 particles?
+	Cloth = new CCloth(21, 9); //64 particles?
 	Camera = new CCamera(1200, 800);
 	return true;
 }
@@ -117,7 +122,13 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
-		Cloth->Update(1.0f);
+		/*Lets calculate deltaTime*/
+		oldTime = newTime;
+		newTime = glfwGetTime();
+
+		dT = newTime - oldTime;
+
+		Cloth->Update(dT);
 		Cloth->Render(*Camera, LIT_SHADER);
 
 		glfwSwapBuffers(MAIN_WINDOW);

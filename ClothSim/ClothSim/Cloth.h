@@ -18,6 +18,8 @@ public:
 	void Update(float deltaTime);
 	void Render(CCamera Camera, GLuint Shader);
 
+	int GetIndexFromGridCoord(int x, int y);
+
 private:
 	enum{POSITION, ELEMENT, NORMAL, NUMOFBUFFERS};
 

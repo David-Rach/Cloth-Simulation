@@ -3,7 +3,7 @@
 CCamera::CCamera(int _width, int _height)
 {
 	/*Setup pos and dir*/
-	m_position = glm::vec3(0, 0 , -16);
+	m_position = glm::vec3(0, 0 , 25);
 	SpeedBoost = false;
 	cameraSpd = 2.5f;
 

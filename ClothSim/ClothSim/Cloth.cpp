@@ -9,14 +9,82 @@ CCloth::CCloth(int m_width, int m_height)
 	m_vertices.resize(m_NumOfParticles);
 	m_normals.resize(m_NumOfParticles);
 
+	/*Create Particles*/
 	for (int x = 0; x < m_width; x++)
 	{
 		for (int y = 0; y < m_height; y++)
 		{
-			//float xpos = x - m_width / 2.f , ypos = y - m_height / 2.f ;
-			m_ArrayOfParticles.push_back(new CParticle(glm::vec3(x - (m_width/2) , y - (m_height/2) , 0)));
+			CParticle* Particle;
+			Particle = new CParticle(glm::vec3(x - (m_width / 2), y - (m_height / 2), 0));
+			m_ArrayOfParticles.push_back(Particle);
 		}
 	}
+
+	/*Shear Constraints*/
+	for (int x = 0; x < m_width; x++)
+	{
+		for (int y = 0; y < m_height; y++)
+		{
+			CParticle* ParticleA = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)];
+
+			/*Stretch Constraints*/
+			if (x + 1 < m_width)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB,STRETCH));
+			}
+
+			if (y + 1 < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, STRETCH));
+			}
+
+			/*Shear Constraints*/
+			if (x + 1 < m_width && y + 1 < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y + 1)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, SHEAR));
+			}
+
+			if (x - 1 >= 0 && y + 1 < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x - 1, y + 1)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, SHEAR));
+			}
+
+			/*Bend constraints*/
+			if (x + 2 < m_width && y + 2 < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y + 2)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
+			}
+
+			if (x + 2 < m_width && y < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB,BEND));
+			}
+
+			if (x < m_width && y + 2 < m_height)
+			{
+				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 2)];
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
+			}
+		}
+	}
+
+	m_ArrayOfParticles[GetIndexFromGridCoord(0, m_height-1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(1, m_height-1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(2, m_height - 1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(3, m_height - 1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(4, m_height - 1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(5, m_height - 1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(6, m_height - 1)]->m_moveable = false;
+	//m_ArrayOfParticles[GetIndexFromGridCoord(7, m_height - 1)]->m_moveable = false;
+	m_ArrayOfParticles[GetIndexFromGridCoord(11, 5)]->m_moveable = false;
+	m_ArrayOfParticles[GetIndexFromGridCoord(10, 5)]->m_moveable = false;
+	m_ArrayOfParticles[GetIndexFromGridCoord(m_width - 1, m_height - 1)]->m_moveable = false;
 
 	/*Setup Buffers*/
 	glGenVertexArrays(1, &VertexArrayBuffer);
@@ -29,10 +97,28 @@ CCloth::~CCloth()
 	{
 		delete m_ArrayOfParticles[i];
 	}
+
+	for (size_t i = 0; i < m_ArrayOfConstraints.size(); i++)
+	{
+		delete m_ArrayOfConstraints[i];
+	}
 }
 
 void CCloth::Update(float deltaTime)
 {
+	for (size_t i = 0; i < m_ArrayOfParticles.size(); i++)
+	{
+		m_ArrayOfParticles[i]->AddForce(glm::vec3(0, -0.098f, 0));
+		m_ArrayOfParticles[i]->Update(deltaTime);
+	}
+
+	for (size_t i = 0; i < m_ArrayOfConstraints.size(); i++)
+	{
+		m_ArrayOfConstraints[i]->Update(deltaTime);
+		
+	}
+	
+
 	/*stream the vertices*/
 	for (unsigned int i = 0; i < m_ArrayOfParticles.size(); i++)
 	{
@@ -84,7 +170,12 @@ void CCloth::Render(CCamera Camera, GLuint Shader)
 	/*Gonna use an element buffer*/
 	glBindVertexArray(VertexArrayBuffer);
 	glPointSize(6.0f);
-	glDrawElements(GL_POINTS, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_LINES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
 
 	glBindVertexArray(0);
+}
+
+int CCloth::GetIndexFromGridCoord(int x, int y)
+{
+	return (x * m_height + y);
 }
