@@ -17,8 +17,13 @@ public:
 
 	void Update(float deltaTime);
 	void Render(CCamera Camera, GLuint Shader);
+	CParticle* GetParticle(int Index);
 
+	glm::vec3 ComputeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	int GetIndexFromGridCoord(int x, int y);
+
+	int m_width;
+	int m_height;
 
 private:
 	enum{POSITION, ELEMENT, NORMAL, NUMOFBUFFERS};
@@ -32,9 +37,6 @@ private:
 
 	std::vector<CParticle*> m_ArrayOfParticles;
 	std::vector<CConstraint*> m_ArrayOfConstraints;
-
-	int m_width;
-	int m_height;
 	int m_NumOfParticles;
 };
 #endif

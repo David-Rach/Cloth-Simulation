@@ -15,7 +15,7 @@ CCloth::CCloth(int m_width, int m_height)
 		for (int y = 0; y < m_height; y++)
 		{
 			CParticle* Particle;
-			Particle = new CParticle(glm::vec3(x - (m_width / 2), y - (m_height / 2), 0));
+			Particle = new CParticle(glm::vec3((x ) - (m_width / 2), (y) - (m_height / 2), 0));
 			m_ArrayOfParticles.push_back(Particle);
 		}
 	}
@@ -74,21 +74,38 @@ CCloth::CCloth(int m_width, int m_height)
 		}
 	}
 
-	m_ArrayOfParticles[GetIndexFromGridCoord(0, m_height-1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(1, m_height-1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(2, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(3, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(4, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(5, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(6, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(7, m_height - 1)]->m_moveable = false;
-	m_ArrayOfParticles[GetIndexFromGridCoord(11, 5)]->m_moveable = false;
-	m_ArrayOfParticles[GetIndexFromGridCoord(10, 5)]->m_moveable = false;
-	m_ArrayOfParticles[GetIndexFromGridCoord(m_width - 1, m_height - 1)]->m_moveable = false;
+	for (unsigned int i = 0; i < 1; i++)
+	{
+		m_ArrayOfParticles[GetIndexFromGridCoord(i, m_height - 1)]->m_moveable = false;
+		m_ArrayOfParticles[GetIndexFromGridCoord((m_width - 1) - i, m_height - 1)]->m_moveable = false;
+	}
+
+	int CentrePoint = (m_width - 1) / 2;
+	CentrePoint = floor(CentrePoint);
+	m_ArrayOfParticles[GetIndexFromGridCoord(CentrePoint, m_height - 1)]->m_moveable = false;
+
+
 
 	/*Setup Buffers*/
 	glGenVertexArrays(1, &VertexArrayBuffer);
 	glGenBuffers(NUMOFBUFFERS, BufferArrayObjects);
+
+	/*Stream the indices*/
+	for (unsigned int x = 0; x < m_width - 1; x++)
+	{
+		for (unsigned int z = 0; z < m_height - 1; z++)
+		{
+			//First triangle
+			m_indices.push_back(x * m_height + z);
+			m_indices.push_back(x * m_height + z + 1);
+			m_indices.push_back((x + 1) * m_height + z);
+
+			//Second triangle
+			m_indices.push_back((x + 1) * m_height + z);
+			m_indices.push_back(x * m_height + z + 1);
+			m_indices.push_back((x + 1) * m_height + z + 1);
+		}
+	}
 }
 
 CCloth::~CCloth()
@@ -108,7 +125,7 @@ void CCloth::Update(float deltaTime)
 {
 	for (size_t i = 0; i < m_ArrayOfParticles.size(); i++)
 	{
-		m_ArrayOfParticles[i]->AddForce(glm::vec3(0, -0.098f, 0));
+		m_ArrayOfParticles[i]->AddForce(glm::vec3(0, -0.012f, 0));
 		m_ArrayOfParticles[i]->Update(deltaTime);
 	}
 
@@ -125,20 +142,19 @@ void CCloth::Update(float deltaTime)
 		m_vertices[i] = m_ArrayOfParticles[i]->GetPosition();
 	}
 
-	/*Stream the indices*/
-	for (unsigned int x = 0; x < m_width - 1; x++)
-	{
-		for (unsigned int z = 0; z < m_height - 1; z++)
-		{
-			//First triangle
-			m_indices.push_back(x * m_height + z);
-			m_indices.push_back(x * m_height + z + 1);
-			m_indices.push_back((x + 1) * m_height + z);
 
-			//Second triangle
-			m_indices.push_back((x + 1) * m_height + z);
-			m_indices.push_back(x * m_height + z + 1);
-			m_indices.push_back((x + 1) * m_height + z + 1);
+	/*Stream the normals*/
+	int count = 0;
+	for (int x = 0; x < m_width - 1; x++)
+	{
+		for (int y = 0; y < m_height - 1; y++)
+		{
+			glm::vec3 a = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)]->GetPosition();
+			glm::vec3 b = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)]->GetPosition();
+			glm::vec3 c = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)]->GetPosition();
+
+			m_normals[count] = ComputeNormal(a,b,c);
+			count++;
 		}
 	}
 
@@ -152,6 +168,12 @@ void CCloth::Update(float deltaTime)
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, BufferArrayObjects[NORMAL]);
+	glBufferData(GL_ARRAY_BUFFER, m_normals.size() * sizeof(glm::vec3), &m_normals[0], GL_STATIC_DRAW);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
 }
 
 void CCloth::Render(CCamera Camera, GLuint Shader)
@@ -169,10 +191,22 @@ void CCloth::Render(CCamera Camera, GLuint Shader)
 
 	/*Gonna use an element buffer*/
 	glBindVertexArray(VertexArrayBuffer);
-	glPointSize(6.0f);
+	glPointSize(2.0f);
+	//glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_POINTS, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
 	glDrawElements(GL_LINES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
 
 	glBindVertexArray(0);
+}
+
+CParticle * CCloth::GetParticle(int Index)
+{
+	return m_ArrayOfParticles[Index];
+}
+
+glm::vec3 CCloth::ComputeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c)
+{
+	return glm::normalize(glm::cross(b - a, c - a));
 }
 
 int CCloth::GetIndexFromGridCoord(int x, int y)

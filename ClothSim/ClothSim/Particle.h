@@ -12,6 +12,7 @@ public:
 	void AddForce(glm::vec3 force);
 	void Update(float deltaTime);
 	bool m_moveable = true;
+	void SetPosition(glm::vec3 _Val);
 
 	/*Accessor functions*/
 	glm::vec3 GetPosition();
@@ -21,7 +22,7 @@ private:
 	glm::vec3 m_oldPosition;
 	glm::vec3 m_acceleration = glm::vec3(0,0,0);
 
-	float m_mass = 1.f;
+	float m_mass = 0.1f;
 	
 	
 };

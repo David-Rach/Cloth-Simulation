@@ -23,8 +23,11 @@
 
 GLFWwindow* MAIN_WINDOW;
 GLuint LIT_SHADER;
+GLuint FLAT_SHADER;
 CCloth* Cloth;
 CCamera* Camera;
+bool Fullscreen = false;
+int MoveCloth = 0;
 
 /*DeltaTime*/
 double dT;
@@ -38,11 +41,53 @@ void Shutdown()
 	delete Camera;
 }
 
+void WindowResizeCallback(GLFWwindow* _window, int _width, int _height)
+{
+	Camera->resize(_width, _height);
+	glViewport(0, 0, _width, _height);
+}
+
 void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(MAIN_WINDOW,true);
+	}
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		MoveCloth = 1;
+	}
+	else if (key == GLFW_KEY_P && action == GLFW_RELEASE)
+	{
+		MoveCloth = 0;
+	}
+
+	if (key == GLFW_KEY_O && action == GLFW_PRESS)
+	{
+		MoveCloth = 2;
+	}
+	else if (key == GLFW_KEY_O && action == GLFW_RELEASE)
+	{
+		MoveCloth = 0;
+	}
+
+	//Fullscreen
+	if (key == GLFW_KEY_F && action == GLFW_PRESS)
+	{
+		if (!Fullscreen)
+		{
+			float width = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
+			float height = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
+			Fullscreen = true;
+
+			glfwSetWindowMonitor(MAIN_WINDOW, glfwGetWindowMonitor(MAIN_WINDOW), 0, 0, width, height, 60);
+		}
+		else
+		{
+			glfwSetWindowMonitor(MAIN_WINDOW, NULL, 100, 100, 1200, 800, 60);
+			Fullscreen = false;
+		}
 	}
 }
 
@@ -90,6 +135,7 @@ bool Init()
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(MAIN_WINDOW, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(MAIN_WINDOW, KeyboardCallback);
+	glfwSetWindowSizeCallback(MAIN_WINDOW, WindowResizeCallback);
 
 	return true;
 }
@@ -97,9 +143,10 @@ bool Init()
 bool OnGameplayBegin()
 {
 	CShaderLoader ShaderLoader;
-	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/flat.vs", "Assets/Shaders/flat.fs");
+	FLAT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/flat.vs", "Assets/Shaders/flat.fs");
+	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/lit.vs", "Assets/Shaders/lit.fs");
 
-	Cloth = new CCloth(21, 9); //64 particles?
+	Cloth = new CCloth(128, 64); //64 particles?
 	Camera = new CCamera(1200, 800);
 	return true;
 }
@@ -128,8 +175,27 @@ int main()
 
 		dT = newTime - oldTime;
 
-		Cloth->Update(dT);
+		Cloth->Update(1.f/120.f);
 		Cloth->Render(*Camera, LIT_SHADER);
+
+		float speed = 20.f;
+
+		if (MoveCloth == 1)
+		{
+			CParticle* Particle1 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(0, Cloth->m_height - 1));
+			Particle1->SetPosition(Particle1->GetPosition() + (glm::vec3(1, 0, 1) * (float)dT) * speed);
+
+			CParticle* Particle2 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(Cloth->m_width - 1, Cloth->m_height - 1));
+			Particle2->SetPosition(Particle2->GetPosition() + (glm::vec3(-1, 0, 1) * (float)dT) * speed);
+		}
+		else if (MoveCloth == 2)
+		{
+			CParticle* Particle1 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(0, Cloth->m_height - 1));
+			Particle1->SetPosition(Particle1->GetPosition() + (glm::vec3(-1, 0, -1) * (float)dT) * speed);
+
+			CParticle* Particle2 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(Cloth->m_width - 1, Cloth->m_height - 1));
+			Particle2->SetPosition(Particle2->GetPosition() + (glm::vec3(1, 0, -1) * (float)dT) * speed);
+		}
 
 		glfwSwapBuffers(MAIN_WINDOW);
 		glfwPollEvents();

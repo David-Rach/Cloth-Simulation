@@ -3,7 +3,7 @@
 CCamera::CCamera(int _width, int _height)
 {
 	/*Setup pos and dir*/
-	m_position = glm::vec3(0, 0 , 25);
+	m_position = glm::vec3(0, 8 , 120);
 	SpeedBoost = false;
 	cameraSpd = 2.5f;
 
@@ -23,7 +23,7 @@ CCamera::CCamera(int _width, int _height)
 	ViewMatrix = glm::lookAt
 	(
 		m_position,			//Camera is where now?
-		glm::vec3(0,0,0),	//Camera looks at what now?
+		glm::vec3(0,8,0),	//Camera looks at what now?
 		UpDirection			//Camera head is what way now?
 	);
 }
@@ -42,7 +42,7 @@ void CCamera::resize(int _width, int _height)
 	ViewMatrix = glm::lookAt
 	(
 		m_position,	//Camera is where now?
-		m_position + CameraFront,	//Camera looks at what now?
+		glm::vec3(0, 8, 0),	//Camera looks at what now?
 		UpDirection	//Camera head is what way now?
 	);
 }

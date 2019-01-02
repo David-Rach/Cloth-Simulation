@@ -41,18 +41,18 @@ void CConstraint::Update(float deltaTime)
 
 	if (Type == STRETCH)
 	{
-		m_particleA->AddForce(CorrectionVector);
-		m_particleB->AddForce(-CorrectionVector);
+		m_particleA->AddForce(CorrectionVector * 6.f);
+		m_particleB->AddForce(-CorrectionVector * 6.f);
 	}
 	else if (Type == SHEAR)
 	{
-		m_particleA->AddForce(CorrectionVector * .1f);
-		m_particleB->AddForce(-CorrectionVector * .1f);
+		m_particleA->AddForce(CorrectionVector * .5f);
+		m_particleB->AddForce(-CorrectionVector * .5f);
 	}
 	else if (Type == BEND)
 	{
-		m_particleA->AddForce(CorrectionVector * .5f);
-		m_particleB->AddForce(-CorrectionVector * .5f);
+		m_particleA->AddForce(CorrectionVector * .8f);
+		m_particleB->AddForce(-CorrectionVector * .8f);
 	}
 
 
