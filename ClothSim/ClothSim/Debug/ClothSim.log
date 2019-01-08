@@ -1,5 +1,12 @@
 ﻿  Cloth.cpp
-d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(89): warning C4018: '<': signed/unsigned mismatch
-d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(91): warning C4018: '<': signed/unsigned mismatch
-d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(108): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(89): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(99): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(101): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(118): warning C4018: '<': signed/unsigned mismatch
+  Particle.cpp
+  main.cpp
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(80): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(81): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(84): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Generating Code...
   ClothSim.vcxproj -> D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe

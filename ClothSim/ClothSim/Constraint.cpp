@@ -31,30 +31,32 @@ void CConstraint::LinkParticles(CParticle * pA, CParticle * pB)
 
 void CConstraint::Update(float deltaTime)
 {
-	/*Get distance from Paticle A to particle B*/
-	glm::vec3 pA_to_Pb = m_particleB->GetPosition() - m_particleA->GetPosition();
-	float distant = glm::length(pA_to_Pb);
-
-	/*Find the correction force*/
-	glm::vec3 CorrectionVector = pA_to_Pb * (1 - m_restingLength / distant);
-	CorrectionVector *= .5f;
-
-	if (Type == STRETCH)
+	for (unsigned int i = 0; i < 15; i++)
 	{
-		m_particleA->AddForce(CorrectionVector * 6.f);
-		m_particleB->AddForce(-CorrectionVector * 6.f);
-	}
-	else if (Type == SHEAR)
-	{
-		m_particleA->AddForce(CorrectionVector * .5f);
-		m_particleB->AddForce(-CorrectionVector * .5f);
-	}
-	else if (Type == BEND)
-	{
-		m_particleA->AddForce(CorrectionVector * .8f);
-		m_particleB->AddForce(-CorrectionVector * .8f);
-	}
+		/*Get distance from Paticle A to particle B*/
+		glm::vec3 pA_to_Pb = m_particleB->GetPosition() - m_particleA->GetPosition();
+		float distant = glm::length(pA_to_Pb);
 
+		/*Find the correction force*/
+		glm::vec3 CorrectionVector = pA_to_Pb * (1 - m_restingLength / distant);
+		CorrectionVector *= .5f;
+
+		if (Type == STRETCH)
+		{
+			m_particleA->AddForce(CorrectionVector);
+			m_particleB->AddForce(-CorrectionVector);
+		}
+		else if (Type == SHEAR)
+		{
+			m_particleA->AddForce(CorrectionVector);
+			m_particleB->AddForce(-CorrectionVector);
+		}
+		else if (Type == BEND)
+		{
+			m_particleA->AddForce(CorrectionVector);
+			m_particleB->AddForce(-CorrectionVector);
+		}
+	}
 
 }
 

@@ -22,7 +22,7 @@ private:
 	glm::vec3 m_oldPosition;
 	glm::vec3 m_acceleration = glm::vec3(0,0,0);
 
-	float m_mass = 0.1f;
+	float m_mass = 1.f;
 	
 	
 };

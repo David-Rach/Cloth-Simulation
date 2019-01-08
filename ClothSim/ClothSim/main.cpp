@@ -30,7 +30,7 @@ bool Fullscreen = false;
 int MoveCloth = 0;
 
 /*DeltaTime*/
-double dT;
+double dT = 1.f/120.f;
 double oldTime;
 double newTime;
 
@@ -147,6 +147,7 @@ bool OnGameplayBegin()
 	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/lit.vs", "Assets/Shaders/lit.fs");
 
 	Cloth = new CCloth(128, 64); //64 particles?
+	Cloth->AddTexture("Assets/Textures/ClothMat.jpg");
 	Camera = new CCamera(1200, 800);
 	return true;
 }
@@ -175,7 +176,7 @@ int main()
 
 		dT = newTime - oldTime;
 
-		Cloth->Update(1.f/120.f);
+		Cloth->Update(1.f/30.f);
 		Cloth->Render(*Camera, LIT_SHADER);
 
 		float speed = 20.f;
