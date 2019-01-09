@@ -9,7 +9,7 @@ CCloth::CCloth(int m_width, int m_height)
 	m_vertices.resize(m_NumOfParticles);
 	m_normals.resize(m_NumOfParticles);
 
-	/*Create Particles*/
+	/*Create Texture Coordinates*/
 	float xPos = 1.f / m_width;
 	float yPos = 1.f / m_height;
 
@@ -18,7 +18,7 @@ CCloth::CCloth(int m_width, int m_height)
 		for (int y = 0; y < m_height; y++)
 		{
 			CParticle* Particle;
-			Particle = new CParticle(glm::vec3((x ) - (m_width / 2), (y) - (m_height / 2), 0));
+			Particle = new CParticle(glm::vec3(((float)x / 2.f) - (m_width), ((float)y / 2.f) - (m_height), 0));
 			m_ArrayOfParticles.push_back(Particle);
 
 			m_UVs.push_back(glm::vec2(xPos * float(x), -yPos * (float)y));
@@ -118,6 +118,20 @@ CCloth::CCloth(int m_width, int m_height)
 			m_indices.push_back((x + 1) * m_height + z + 1);
 		}
 	}
+
+	/*Create the faces*/
+	for (int x = 0; x < m_width - 1; x++)
+	{
+		for (int y = 0; y < m_height - 1; y++)
+		{
+			ClothFace Face;
+			Face.p1 = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)];
+			Face.p2 = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)];
+			Face.p3 = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y + 1)];
+			Face.p4 = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)];
+			m_Faces.push_back(Face);
+		}
+	}
 }
 
 CCloth::~CCloth()
@@ -147,7 +161,7 @@ void CCloth::Update(float deltaTime)
 		
 	}
 	
-	Wind(glm::vec3(0.01,0,-0.001f));
+	Wind(glm::vec3(0.01,-0.0001,-0.001f));
 
 	/*stream the vertices*/
 	for (unsigned int i = 0; i < m_ArrayOfParticles.size(); i++)
@@ -155,43 +169,75 @@ void CCloth::Update(float deltaTime)
 		m_vertices[i] = m_ArrayOfParticles[i]->GetPosition();
 	}
 
-
-	/*Stream the normals*/
-	int count = 0;
-	for (int x = 0; x < m_width; x++)
+	if (!bUseOldShading)
 	{
-		for (int y = 0; y < m_height; y++)
+		/*Stream the normals*/
+		for (size_t i = 0; i < m_Faces.size(); i++)
 		{
-			glm::vec3 a;
-			glm::vec3 b;
-			glm::vec3 c;
+			m_Faces[i].normal = ComputeNormalNormalized(m_Faces[i].p1, m_Faces[i].p2, m_Faces[i].p3);
+		}
 
-			a = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)]->GetPosition();
+		/*For Each Particle*/
+		for (size_t i = 0; i < m_ArrayOfParticles.size(); i++)
+		{
+			CParticle* particle = m_ArrayOfParticles[i];
+			glm::vec3 n(0, 0, 0);
 
-			if (x < m_width - 1)
+			/*Go through every face*/
+			for (unsigned int k = 0; k < m_Faces.size(); k++)
 			{
-				b = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)]->GetPosition();
-			}
-			else
-			{
-				b = m_ArrayOfParticles[GetIndexFromGridCoord(x - 1, y)]->GetPosition();
-				b *= -1;
+				/*and check if the particle is connected to face*/
+				if (particle == m_Faces[k].p1 || particle == m_Faces[k].p2 || particle == m_Faces[k].p3 || particle == m_Faces[k].p4)
+				{
+					//if it is, go ahead and add it to n
+					n += m_Faces[k].normal;
+				}
 			}
 
-			if (y < m_height - 1)
-			{
-				c = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)]->GetPosition();
-			}
-			else
-			{
-				c = m_ArrayOfParticles[GetIndexFromGridCoord(x, y - 1)]->GetPosition();
-				c *= -1;
-			}
-			
-			m_normals[count] = ComputeNormalNormalized(a,b,c);
-			count++;
+			m_normals[i] = n;
 		}
 	}
+	else
+	{
+
+		int count = 0;
+		for (int x = 0; x < m_width; x++)
+		{
+			for (int y = 0; y < m_height; y++)
+			{
+				glm::vec3 a;
+				glm::vec3 b;
+				glm::vec3 c;
+
+				a = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)]->GetPosition();
+
+				if (x < m_width - 1)
+				{
+					b = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)]->GetPosition();
+				}
+				else
+				{
+					b = m_ArrayOfParticles[GetIndexFromGridCoord(x - 1, y)]->GetPosition();
+					b *= -1;
+				}
+
+				if (y < m_height - 1)
+				{
+					c = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)]->GetPosition();
+				}
+				else
+				{
+					c = m_ArrayOfParticles[GetIndexFromGridCoord(x, y - 1)]->GetPosition();
+					c *= -1;
+				}
+
+				m_normals[count] = ComputeNormalNormalized(a,b,c);
+				count++;
+			}
+		}
+	}
+
+
 
 	/*Set up GL calls*/
 	glBindVertexArray(VertexArrayBuffer);
@@ -227,9 +273,20 @@ void CCloth::Render(CCamera Camera, GLuint Shader)
 	/*Gonna use an element buffer*/
 	glBindVertexArray(VertexArrayBuffer);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	//glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
-	//glDrawElements(GL_POINTS, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
-	glDrawElements(GL_LINES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+
+	if (iDrawType == 0)
+	{
+		glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+	}
+	else if (iDrawType == 1)
+	{
+		glDrawElements(GL_LINES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+	}
+	else if (iDrawType == 2)
+	{
+		glDrawElements(GL_POINTS, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
+	}
+	
 
 	glBindVertexArray(0);
 }
@@ -316,6 +373,11 @@ glm::vec3 CCloth::ComputeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c)
 glm::vec3 CCloth::ComputeNormalNormalized(glm::vec3 a, glm::vec3 b, glm::vec3 c)
 {
 	return glm::normalize(glm::cross(b - a, c - a));
+}
+
+glm::vec3 CCloth::ComputeNormalNormalized(CParticle * a, CParticle * b, CParticle * c)
+{
+	return glm::normalize(glm::cross(b->GetPosition() - a->GetPosition(), c->GetPosition() - a->GetPosition()));
 }
 
 int CCloth::GetIndexFromGridCoord(int x, int y)

@@ -34,6 +34,12 @@ double dT = 1.f/120.f;
 double oldTime;
 double newTime;
 
+/*Camera things*/
+float lastXpos;
+float lastYpos;
+float yaw = 0;
+float pitch = 0;
+
 void Shutdown()
 {
 	glfwTerminate();
@@ -45,6 +51,38 @@ void WindowResizeCallback(GLFWwindow* _window, int _width, int _height)
 {
 	Camera->resize(_width, _height);
 	glViewport(0, 0, _width, _height);
+}
+
+/*Mouse callback*/
+void MouseCallback(GLFWwindow* _window, double _xPos, double _yPos)
+{
+	/*Offset*/
+	float xOffset = _xPos - lastXpos;
+	float yOffset = lastYpos - _yPos;
+	lastXpos = _xPos;
+	lastYpos = _yPos;
+
+	float sensitivity = 0.1f;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	yaw += xOffset;
+	pitch += yOffset;
+
+	if (pitch > 89.0f)
+	{
+		pitch = 89.0f;
+	}
+	if (pitch < -89.0f)
+	{
+		pitch = -89.0f;
+	}
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	Camera->CameraFront = glm::normalize(front);
 }
 
 void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -70,6 +108,100 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	else if (key == GLFW_KEY_O && action == GLFW_RELEASE)
 	{
 		MoveCloth = 0;
+	}
+
+	//Forward movement
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{
+		Camera->keyArray['w'] = true;
+	}
+	else if (key == GLFW_KEY_W && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['w'] = false;
+	}
+
+	//Backwards movement
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		Camera->keyArray['s'] = true;
+	}
+	else if (key == GLFW_KEY_S && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['s'] = false;
+	}
+
+	//Move left
+	if (key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		Camera->keyArray['a'] = true;
+	}
+	else if (key == GLFW_KEY_A && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['a'] = false;
+	}
+
+	//Move right
+	if (key == GLFW_KEY_D && action == GLFW_PRESS)
+	{
+		Camera->keyArray['d'] = true;
+	}
+	else if (key == GLFW_KEY_D && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['d'] = false;
+	}
+
+	//Move vertical
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	{
+		Camera->keyArray['e'] = true;
+	}
+	else if (key == GLFW_KEY_E && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['e'] = false;
+	}
+
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+	{
+		Camera->keyArray['q'] = true;
+	}
+	else if (key == GLFW_KEY_Q && action == GLFW_RELEASE)
+	{
+		Camera->keyArray['q'] = false;
+	}
+
+	//boost
+	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS)
+	{
+		Camera->SpeedBoost = true;
+	}
+	else if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE)
+	{
+		Camera->SpeedBoost = false;
+	}
+
+	if (key == GLFW_KEY_M && action == GLFW_PRESS)
+	{
+		Camera->bMoveAlongAxis = !Camera->bMoveAlongAxis;
+	}
+
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+	{
+		Cloth->bUseOldShading = !Cloth->bUseOldShading;
+	}
+
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+	{
+		Cloth->iDrawType = 0;
+	}
+
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+	{
+		Cloth->iDrawType = 1;
+	}
+
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS)
+	{
+		Cloth->iDrawType = 2;
 	}
 
 	//Fullscreen
@@ -135,6 +267,7 @@ bool Init()
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(MAIN_WINDOW, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(MAIN_WINDOW, KeyboardCallback);
+	glfwSetCursorPosCallback(MAIN_WINDOW, MouseCallback);
 	glfwSetWindowSizeCallback(MAIN_WINDOW, WindowResizeCallback);
 
 	return true;
@@ -146,8 +279,8 @@ bool OnGameplayBegin()
 	FLAT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/flat.vs", "Assets/Shaders/flat.fs");
 	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/lit.vs", "Assets/Shaders/lit.fs");
 
-	Cloth = new CCloth(128, 64); //64 particles?
-	Cloth->AddTexture("Assets/Textures/ClothMat.jpg");
+	Cloth = new CCloth(64, 64); //64 particles?
+	Cloth->AddTexture("Assets/Textures/matt.jpg");
 	Camera = new CCamera(1200, 800);
 	return true;
 }
@@ -178,6 +311,7 @@ int main()
 
 		Cloth->Update(1.f/30.f);
 		Cloth->Render(*Camera, LIT_SHADER);
+		Camera->update(1.f / 30.0f);
 
 		float speed = 20.f;
 

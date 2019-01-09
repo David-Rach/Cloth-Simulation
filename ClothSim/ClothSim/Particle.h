@@ -2,6 +2,8 @@
 #define PARTICLE_H
 
 #include <glm.hpp>
+#include <vector>
+
 
 class CParticle
 {
@@ -16,6 +18,7 @@ public:
 
 	/*Accessor functions*/
 	glm::vec3 GetPosition();
+	std::vector<int> m_connectedFaces;
 
 private:
 	glm::vec3 m_position;

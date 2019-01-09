@@ -10,6 +10,14 @@
 #include "Constraint.h"
 #include "Camera.h"
 
+struct ClothFace
+{
+public:
+	ClothFace(){};
+	CParticle* p1,* p2,* p3,* p4;
+	glm::vec3 normal;
+};
+
 class CCloth
 {
 public:
@@ -25,10 +33,14 @@ public:
 
 	glm::vec3 ComputeNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	glm::vec3 ComputeNormalNormalized(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	glm::vec3 ComputeNormalNormalized(CParticle* a, CParticle* b, CParticle* c);
 	int GetIndexFromGridCoord(int x, int y);
 
 	int m_width;
 	int m_height;
+
+	bool bUseOldShading = false;
+	int iDrawType = 0;
 
 private:
 	enum{POSITION, ELEMENT, NORMAL,TEXTURE_COORDS ,NUMOFBUFFERS};
@@ -39,6 +51,7 @@ private:
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_normals;
 	std::vector<glm::vec2> m_UVs;
+	std::vector<ClothFace> m_Faces;
 	std::vector<unsigned int> m_indices;
 	GLuint m_texture;
 

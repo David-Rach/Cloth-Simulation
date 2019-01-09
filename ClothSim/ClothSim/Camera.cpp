@@ -95,4 +95,16 @@ void CCamera::update(float deltaTime)
 	{
 		cameraSpd = 2.5f;
 	}
+
+	MoveAlongAxis(deltaTime);
+}
+
+void CCamera::MoveAlongAxis(float deltaTime)
+{
+	if (bMoveAlongAxis)
+	{
+		float deltaCamSpd = cameraSpd * deltaTime;
+		m_position += -deltaCamSpd * glm::vec3(-1, 0, 0);
+	}
+
 }
