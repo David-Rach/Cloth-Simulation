@@ -36,6 +36,7 @@ void CConstraint::Update(float deltaTime)
 		/*Get distance from Paticle A to particle B*/
 		glm::vec3 pA_to_Pb = m_particleB->GetPosition() - m_particleA->GetPosition();
 		float distant = glm::length(pA_to_Pb);
+		//float distant = pA_to_Pb.length();
 
 		/*Find the correction force*/
 		glm::vec3 CorrectionVector = pA_to_Pb * (1 - m_restingLength / distant);

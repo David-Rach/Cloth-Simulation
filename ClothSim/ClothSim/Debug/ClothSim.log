@@ -1,1 +1,10 @@
-﻿  ClothSim.vcxproj -> I:\Movies\recordings\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe
+﻿  main.cpp
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(68): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(69): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(223): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(224): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(227): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(285): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  ClothSim.vcxproj -> I:\Movies\recordings\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe

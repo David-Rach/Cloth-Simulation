@@ -22,7 +22,7 @@ void CParticle::Update(float deltaTime)
 	{
 		/*Verlet Integration*/
 		glm::vec3 Temp = m_position;
-		m_position = m_position + (m_position - m_oldPosition) * 0.99f + m_acceleration * deltaTime ;	//Probably gonna need damping in here
+		m_position = m_position + (m_position - m_oldPosition) * 0.97f + m_acceleration * (1.f/60.f) ;	//Probably gonna need damping in here
 		m_oldPosition = Temp;
 		m_acceleration = glm::vec3(0, 0, 0);
 	}

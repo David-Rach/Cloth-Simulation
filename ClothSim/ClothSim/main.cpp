@@ -16,15 +16,23 @@
 #include <glfw3.h>
 #include <glm.hpp>
 #include <vld.h>
+#include <time.h>
 
 /*Local Includes*/
 #include "ShaderLoader.h"
 #include "Cloth.h"
+#include "Ball.h"
+#include "Backdrop.h"
 
 GLFWwindow* MAIN_WINDOW;
 GLuint LIT_SHADER;
 GLuint FLAT_SHADER;
+GLuint BACKDROP_SHADER;
+GLuint BALL_SHADER;
 CCloth* Cloth;
+CBall* Ball;
+CBackdrop* Backdrop;
+
 CCamera* Camera;
 bool Fullscreen = false;
 int MoveCloth = 0;
@@ -35,9 +43,9 @@ double oldTime;
 double newTime;
 
 /*Camera things*/
-float lastXpos;
-float lastYpos;
-float yaw = 0;
+float lastXpos = 600;
+float lastYpos = 400;
+float yaw = 270;
 float pitch = 0;
 
 void Shutdown()
@@ -45,6 +53,8 @@ void Shutdown()
 	glfwTerminate();
 	delete Cloth;
 	delete Camera;
+	delete Backdrop;
+	delete Ball;
 }
 
 void WindowResizeCallback(GLFWwindow* _window, int _width, int _height)
@@ -204,6 +214,11 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 		Cloth->iDrawType = 2;
 	}
 
+	if (key == GLFW_KEY_N && action == GLFW_PRESS)
+	{
+		Cloth->bNormalMapping = !Cloth->bNormalMapping;
+	}
+
 	//Fullscreen
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
@@ -270,6 +285,10 @@ bool Init()
 	glfwSetCursorPosCallback(MAIN_WINDOW, MouseCallback);
 	glfwSetWindowSizeCallback(MAIN_WINDOW, WindowResizeCallback);
 
+	/*Initialize the time seed*/
+	srand(time(NULL));
+	glPointSize(5.0f);
+
 	return true;
 }
 
@@ -278,9 +297,18 @@ bool OnGameplayBegin()
 	CShaderLoader ShaderLoader;
 	FLAT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/flat.vs", "Assets/Shaders/flat.fs");
 	LIT_SHADER = ShaderLoader.loadShaders("Assets/Shaders/lit.vs", "Assets/Shaders/lit.fs");
+	BACKDROP_SHADER = ShaderLoader.loadShaders("Assets/Shaders/backdrop.vs", "Assets/Shaders/backdrop.fs");
+	BALL_SHADER = ShaderLoader.loadShaders("Assets/Shaders/Ball.vs", "Assets/Shaders/Ball.fs");
 
-	Cloth = new CCloth(64, 64); //64 particles?
-	Cloth->AddTexture("Assets/Textures/matt.jpg");
+	Cloth = new CCloth(64, 32); //64 particles?
+	Cloth->AddTexture("Assets/Textures/Cloth/aFabric.jpg");
+	Cloth->AddNormalMap("Assets/Textures/Cloth/nFabric.jpg");
+
+	Backdrop = new CBackdrop("Assets/Textures/Backdrop.jpg");
+
+	Ball = new CBall();
+	Ball->SetClothObject(Cloth);
+
 	Camera = new CCamera(1200, 800);
 	return true;
 }
@@ -309,11 +337,21 @@ int main()
 
 		dT = newTime - oldTime;
 
+		glDisable(GL_DEPTH_TEST);
+		Backdrop->Render(BACKDROP_SHADER);
+		glEnable(GL_DEPTH_TEST);
+
+		Ball->Update(1.f / 30.f);
+
 		Cloth->Update(1.f/30.f);
 		Cloth->Render(*Camera, LIT_SHADER);
-		Camera->update(1.f / 30.0f);
 
-		float speed = 20.f;
+		
+
+		Camera->update(1.f / 30.0f);
+		Ball->Render(*Camera, BALL_SHADER);
+
+		float speed = 4.f;
 
 		if (MoveCloth == 1)
 		{

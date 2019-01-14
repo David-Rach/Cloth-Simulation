@@ -3,7 +3,7 @@
 CCamera::CCamera(int _width, int _height)
 {
 	/*Setup pos and dir*/
-	m_position = glm::vec3(0, 0 , 100);
+	m_position = glm::vec3(0, 0 , 10);
 	SpeedBoost = false;
 	cameraSpd = 2.5f;
 
@@ -89,11 +89,11 @@ void CCamera::update(float deltaTime)
 
 	if (SpeedBoost)
 	{
-		cameraSpd = 100.0f;
+		cameraSpd = 10.0f;
 	}
 	else
 	{
-		cameraSpd = 2.5f;
+		cameraSpd = .5f;
 	}
 
 	MoveAlongAxis(deltaTime);
