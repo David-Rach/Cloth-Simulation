@@ -1,10 +1,47 @@
-﻿  main.cpp
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(66): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(67): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(68): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(69): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(223): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(224): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(227): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-i:\movies\recordings\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(285): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  ClothSim.vcxproj -> I:\Movies\recordings\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe
+﻿  Backdrop.cpp
+  Ball.cpp
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\ball.cpp(35): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=unsigned int
+          ]
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\ball.cpp(36): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=unsigned int
+          ]
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\ball.cpp(38): warning C4244: 'argument': conversion from 'float' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=unsigned int
+          ]
+  Camera.cpp
+  Cloth.cpp
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(90): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(100): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(102): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(141): warning C4018: '<': signed/unsigned mismatch
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(169): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(170): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\cloth.cpp(171): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  Constraint.cpp
+  main.cpp
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(69): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(70): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(71): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(72): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(231): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(232): warning C4244: 'initializing': conversion from 'const int' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(235): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(293): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(349): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\youtube\2.cloth simulation\cloth-simulation\clothsim\clothsim\main.cpp(354): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Particle.cpp
+  ShaderLoader.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+SOILd.lib(image_DXT.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'SOILd.lib(image_DXT.obj)' or at 'D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\vc120.pdb'; linking object as if no debug info
+SOILd.lib(image_helper.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'SOILd.lib(image_helper.obj)' or at 'D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\vc120.pdb'; linking object as if no debug info
+SOILd.lib(SOIL.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'SOILd.lib(SOIL.obj)' or at 'D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\vc120.pdb'; linking object as if no debug info
+SOILd.lib(stb_image_aug.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'SOILd.lib(stb_image_aug.obj)' or at 'D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\vc120.pdb'; linking object as if no debug info
+  ClothSim.vcxproj -> D:\YouTube\2.Cloth Simulation\Cloth-Simulation\ClothSim\Debug\ClothSim.exe

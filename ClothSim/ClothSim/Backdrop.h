@@ -6,7 +6,6 @@
 #include <glm\matrix.hpp>
 #include <SOIL.h>
 #include <iostream>
-
 #include <glew.h>
 #include <glfw3.h>
 

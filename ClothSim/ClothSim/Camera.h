@@ -2,7 +2,6 @@
 #define CAMERA_H
 
 #include <iostream>
-
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
@@ -21,7 +20,6 @@ public:
 	/*Camera functions*/
 	void resize(int _width, int _height);
 	void update(float deltaTime);
-	void MoveAlongAxis(float deltaTime);
 
 	glm::vec3 UpDirection;
 	glm::vec3 CameraFront;
@@ -31,7 +29,6 @@ public:
 	float cameraSpd;
 	bool SpeedBoost;
 	bool keyArray[256];
-	bool bMoveAlongAxis = false;
 
 private:
 };

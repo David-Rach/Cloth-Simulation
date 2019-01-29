@@ -79,7 +79,7 @@ void CBall::Update(float deltaTime)
 
 	t += deltaTime;
 
-	/*Move Ball*/
+	/*I move the ball along the Z axis by using a value from this sine wave equation*/
 	m_position.z = m_InitialPosition.z + (6 * glm::sin(0.1f * t));
 }
 

@@ -4,7 +4,6 @@
 #include <glm.hpp>
 #include <vector>
 
-
 class CParticle
 {
 public:
@@ -16,7 +15,6 @@ public:
 	bool m_moveable = true;
 	void SetPosition(glm::vec3 _Val);
 
-	/*Accessor functions*/
 	glm::vec3 GetPosition();
 	std::vector<int> m_connectedFaces;
 
@@ -26,7 +24,5 @@ private:
 	glm::vec3 m_acceleration = glm::vec3(0,0,0);
 
 	float m_mass = 1.f;
-	
-	
 };
 #endif

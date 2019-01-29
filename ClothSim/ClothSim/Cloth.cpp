@@ -37,52 +37,51 @@ CCloth::CCloth(int m_width, int m_height)
 			if (x + 1 < m_width)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, STRETCH));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			if (y + 1 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 1)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, STRETCH));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			/*Shear Constraints*/
 			if (x + 1 < m_width && y + 1 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y + 1)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, SHEAR));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			if (x - 1 >= 0 && y + 1 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x - 1, y + 1)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, SHEAR));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			/*Bend constraints*/
 			if (x + 2 < m_width && y + 2 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y + 2)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			if (x + 2 < m_width && y < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
 			if (x < m_width && y + 2 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 2)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB));
 			}
 
-			/*Special Case*/
 			if (x + 2 < m_width && y + 2 < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 2)];
-				m_ArrayOfConstraints.push_back(new CConstraint(m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 2)], m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y)], BEND));
+				m_ArrayOfConstraints.push_back(new CConstraint(m_ArrayOfParticles[GetIndexFromGridCoord(x, y + 2)], m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y)]));
 			}
 		}
 	}
@@ -341,6 +340,7 @@ void CCloth::Render(CCamera Camera, GLuint Shader)
 	glBindVertexArray(0);
 }
 
+/*Old method I use. This applied a wind force to every triangle face*/
 void CCloth::AddWindForces(CParticle* p1, CParticle* p2,CParticle* p3, glm::vec3 direction)
 {
 	glm::vec3 Normal = ComputeNormal(p1->GetPosition(), p2->GetPosition(), p3->GetPosition());
@@ -351,6 +351,7 @@ void CCloth::AddWindForces(CParticle* p1, CParticle* p2,CParticle* p3, glm::vec3
 	p3->AddForce(force);
 }
 
+/*Current wind method used. Due to the implementation of weighted normals. I now add wind to every quad face*/
 void CCloth::AddWindForces(ClothFace Face, glm::vec3 direction)
 {
 	glm::vec3 Normal = ComputeNormal(Face.p1->GetPosition(), Face.p2->GetPosition(), Face.p3->GetPosition());

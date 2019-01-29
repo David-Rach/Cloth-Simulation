@@ -66,7 +66,6 @@ private:
 	GLuint m_texture;
 	GLuint m_normalMap;
 
-	
 	std::vector<CConstraint*> m_ArrayOfConstraints;
 	int m_NumOfParticles;
 };

@@ -13,7 +13,6 @@ CCamera::CCamera(int _width, int _height)
 	}
 
 	UpDirection = glm::vec3(0, 1, 0);
-	//CameraFront = glm::vec3(0, 0, 1);
 	CameraFront = glm::normalize(glm::vec3(0, 0, 0) - m_position);
 
 	//make our projection matrix
@@ -41,9 +40,9 @@ void CCamera::resize(int _width, int _height)
 	//make view matrix
 	ViewMatrix = glm::lookAt
 	(
-		m_position,	//Camera is where now?
+		m_position,			//Camera is where now?
 		glm::vec3(0, 0, 0),	//Camera looks at what now?
-		UpDirection	//Camera head is what way now?
+		UpDirection			//Camera head is what way now?
 	);
 }
 
@@ -52,9 +51,9 @@ void CCamera::update(float deltaTime)
 	//make view matrix
 	ViewMatrix = glm::lookAt
 	(
-		m_position,	//Camera is where now?
+		m_position,					//Camera is where now?
 		m_position + CameraFront,	//Camera looks at what now?
-		UpDirection	//Camera head is what way now?
+		UpDirection					//Camera head is what way now?
 	);
 
 	float deltaCamSpd = cameraSpd * deltaTime;
@@ -94,16 +93,5 @@ void CCamera::update(float deltaTime)
 	else
 	{
 		cameraSpd = .5f;
-	}
-
-	MoveAlongAxis(deltaTime);
-}
-
-void CCamera::MoveAlongAxis(float deltaTime)
-{
-	if (bMoveAlongAxis)
-	{
-		float deltaCamSpd = cameraSpd * deltaTime;
-		m_position += -deltaCamSpd * glm::vec3(-1, 0, 0);
 	}
 }

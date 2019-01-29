@@ -6,7 +6,7 @@
  | |____| |___| |__| | | |  | |  | |  ____) |_| |_| |  | |
   \_____|______\____/  |_|  |_|  |_| |_____/|_____|_|  |_|
 
-  A cloth simulation by David Rach
+  A cloth simulation by David Kujo Rach
   December 30th 2018
 */
 
@@ -15,7 +15,6 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
-#include <vld.h>
 #include <time.h>
 
 /*Local Includes*/
@@ -63,7 +62,6 @@ void WindowResizeCallback(GLFWwindow* _window, int _width, int _height)
 	glViewport(0, 0, _width, _height);
 }
 
-/*Mouse callback*/
 void MouseCallback(GLFWwindow* _window, double _xPos, double _yPos)
 {
 	/*Offset*/
@@ -100,24 +98,6 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(MAIN_WINDOW,true);
-	}
-
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-	{
-		MoveCloth = 1;
-	}
-	else if (key == GLFW_KEY_P && action == GLFW_RELEASE)
-	{
-		MoveCloth = 0;
-	}
-
-	if (key == GLFW_KEY_O && action == GLFW_PRESS)
-	{
-		MoveCloth = 2;
-	}
-	else if (key == GLFW_KEY_O && action == GLFW_RELEASE)
-	{
-		MoveCloth = 0;
 	}
 
 	//Forward movement
@@ -189,11 +169,6 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 		Camera->SpeedBoost = false;
 	}
 
-	if (key == GLFW_KEY_M && action == GLFW_PRESS)
-	{
-		Camera->bMoveAlongAxis = !Camera->bMoveAlongAxis;
-	}
-
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 	{
 		Cloth->bUseOldShading = !Cloth->bUseOldShading;
@@ -212,16 +187,6 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 	if (key == GLFW_KEY_4 && action == GLFW_PRESS)
 	{
 		Cloth->iDrawType = 2;
-	}
-
-	if (key == GLFW_KEY_N && action == GLFW_PRESS)
-	{
-		Cloth->bNormalMapping = !Cloth->bNormalMapping;
-	}
-
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-	{
-		dT = 0.25f;
 	}
 
 	//Fullscreen
@@ -305,9 +270,12 @@ bool OnGameplayBegin()
 	BACKDROP_SHADER = ShaderLoader.loadShaders("Assets/Shaders/backdrop.vs", "Assets/Shaders/backdrop.fs");
 	BALL_SHADER = ShaderLoader.loadShaders("Assets/Shaders/Ball.vs", "Assets/Shaders/Ball.fs");
 
-	Cloth = new CCloth(32, 32); //64 particles?
-	Cloth->AddTexture("Assets/Textures/Cloth/aFabricOG.jpg");
-	Cloth->AddNormalMap("Assets/Textures/Cloth/nFabric.jpg");
+	/*Create our cloth passing in how many particles wide and high we want*/
+	Cloth = new CCloth(32, 32);
+
+	/*Mix and match the textures and normals to change the look. They range from 01 - 04*/
+	Cloth->AddTexture("Assets/Textures/Cloth/aFabric01.jpg");
+	Cloth->AddNormalMap("Assets/Textures/Cloth/nFabric03.jpg");
 
 	Backdrop = new CBackdrop("Assets/Textures/Backdrop.jpg");
 
@@ -336,44 +304,18 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
-		/*Lets calculate deltaTime*/
-		oldTime = newTime;
-		newTime = glfwGetTime();
-
 		glDisable(GL_DEPTH_TEST);
 		Backdrop->Render(BACKDROP_SHADER);
 		glEnable(GL_DEPTH_TEST);
 
-		Ball->Update(1.f / 30.f);
+		Ball->Update(dT);
 		Ball->Render(*Camera, BALL_SHADER);
 
 		Cloth->Update(dT);
 		Cloth->Render(*Camera, LIT_SHADER);
 
-		
-
 		Camera->update(dT);
-		
-
-		float speed = 4.f;
-
-		if (MoveCloth == 1)
-		{
-			CParticle* Particle1 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(0, Cloth->m_height - 1));
-			Particle1->SetPosition(Particle1->GetPosition() + (glm::vec3(1, 0, 1) * (float)dT) * speed);
-
-			CParticle* Particle2 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(Cloth->m_width - 1, Cloth->m_height - 1));
-			Particle2->SetPosition(Particle2->GetPosition() + (glm::vec3(-1, 0, 1) * (float)dT) * speed);
-		}
-		else if (MoveCloth == 2)
-		{
-			CParticle* Particle1 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(0, Cloth->m_height - 1));
-			Particle1->SetPosition(Particle1->GetPosition() + (glm::vec3(-1, 0, -1) * (float)dT) * speed);
-
-			CParticle* Particle2 = Cloth->GetParticle(Cloth->GetIndexFromGridCoord(Cloth->m_width - 1, Cloth->m_height - 1));
-			Particle2->SetPosition(Particle2->GetPosition() + (glm::vec3(1, 0, -1) * (float)dT) * speed);
-		}
-
+	
 		glfwSwapBuffers(MAIN_WINDOW);
 		glfwPollEvents();
 	}

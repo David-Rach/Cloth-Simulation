@@ -85,7 +85,6 @@ void CBackdrop::Render(GLuint SHADER)
 
 	glUniform1i(glGetUniformLocation(SHADER, "Texture01"), 0);
 
-	/*Gonna use an element buffer*/
 	glBindVertexArray(VertexArrayBuffer);
 
 	glActiveTexture(GL_TEXTURE0);
