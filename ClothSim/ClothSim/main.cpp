@@ -38,7 +38,7 @@ bool Fullscreen = false;
 int MoveCloth = 0;
 
 /*DeltaTime*/
-double dT = 1.f/120.f;
+double dT = 1.f/60.f;
 double oldTime;
 double newTime;
 
@@ -219,6 +219,11 @@ void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
 		Cloth->bNormalMapping = !Cloth->bNormalMapping;
 	}
 
+	if (key == GLFW_KEY_X && action == GLFW_PRESS)
+	{
+		dT = 0.25f;
+	}
+
 	//Fullscreen
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
@@ -300,8 +305,8 @@ bool OnGameplayBegin()
 	BACKDROP_SHADER = ShaderLoader.loadShaders("Assets/Shaders/backdrop.vs", "Assets/Shaders/backdrop.fs");
 	BALL_SHADER = ShaderLoader.loadShaders("Assets/Shaders/Ball.vs", "Assets/Shaders/Ball.fs");
 
-	Cloth = new CCloth(64, 32); //64 particles?
-	Cloth->AddTexture("Assets/Textures/Cloth/aFabric.jpg");
+	Cloth = new CCloth(32, 32); //64 particles?
+	Cloth->AddTexture("Assets/Textures/Cloth/aFabricOG.jpg");
 	Cloth->AddNormalMap("Assets/Textures/Cloth/nFabric.jpg");
 
 	Backdrop = new CBackdrop("Assets/Textures/Backdrop.jpg");
@@ -335,21 +340,20 @@ int main()
 		oldTime = newTime;
 		newTime = glfwGetTime();
 
-		dT = newTime - oldTime;
-
 		glDisable(GL_DEPTH_TEST);
 		Backdrop->Render(BACKDROP_SHADER);
 		glEnable(GL_DEPTH_TEST);
 
 		Ball->Update(1.f / 30.f);
+		Ball->Render(*Camera, BALL_SHADER);
 
-		Cloth->Update(1.f/30.f);
+		Cloth->Update(dT);
 		Cloth->Render(*Camera, LIT_SHADER);
 
 		
 
-		Camera->update(1.f / 30.0f);
-		Ball->Render(*Camera, BALL_SHADER);
+		Camera->update(dT);
+		
 
 		float speed = 4.f;
 

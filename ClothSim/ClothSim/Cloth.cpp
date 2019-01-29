@@ -20,7 +20,6 @@ CCloth::CCloth(int m_width, int m_height)
 		{
 			CParticle* Particle;
 			Particle = new CParticle(glm::vec3(((float)x / 8) - (m_width / 16), ((float)y / 8) - (m_height / 16), 0));
-			//Particle = new CParticle(glm::vec3(((float)x * 0.1), ((float)y * 0.1) , 0));
 			m_ArrayOfParticles.push_back(Particle);
 
 			m_UVs.push_back(glm::vec2(xPos * float(x), -yPos * (float)y));
@@ -33,12 +32,12 @@ CCloth::CCloth(int m_width, int m_height)
 		for (int y = 0; y < m_height; y++)
 		{
 			CParticle* ParticleA = m_ArrayOfParticles[GetIndexFromGridCoord(x, y)];
-
+			
 			/*Stretch Constraints*/
 			if (x + 1 < m_width)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 1, y)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB,STRETCH));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, STRETCH));
 			}
 
 			if (y + 1 < m_height)
@@ -70,7 +69,7 @@ CCloth::CCloth(int m_width, int m_height)
 			if (x + 2 < m_width && y < m_height)
 			{
 				CParticle* ParticleB = m_ArrayOfParticles[GetIndexFromGridCoord(x + 2, y)];
-				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB,BEND));
+				m_ArrayOfConstraints.push_back(new CConstraint(ParticleA, ParticleB, BEND));
 			}
 
 			if (x < m_width && y + 2 < m_height)
@@ -88,24 +87,10 @@ CCloth::CCloth(int m_width, int m_height)
 		}
 	}
 
-	//for (unsigned int i = 0; i < m_width; i++)
-	//{
-	//	m_ArrayOfParticles[GetIndexFromGridCoord(i, m_height - 1)]->m_moveable = false;
-	//}
-
-	for (unsigned int i = 0; i < 15; i++)
+	for (unsigned int i = 0; i < m_width; i++)
 	{
 		m_ArrayOfParticles[GetIndexFromGridCoord(i, m_height - 1)]->m_moveable = false;
-		m_ArrayOfParticles[GetIndexFromGridCoord((m_width - 1) - i, m_height - 1)]->m_moveable = false;
 	}
-
-	//int CentrePoint = (m_width - 1) / 2;
-	//CentrePoint = floor(CentrePoint);
-	//m_ArrayOfParticles[GetIndexFromGridCoord(CentrePoint, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(CentrePoint + 1, m_height - 1)]->m_moveable = false;
-	//m_ArrayOfParticles[GetIndexFromGridCoord(CentrePoint - 1, m_height - 1)]->m_moveable = false;
-
-
 
 	/*Setup Buffers*/
 	glGenVertexArrays(1, &VertexArrayBuffer);

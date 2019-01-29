@@ -106,5 +106,4 @@ void CCamera::MoveAlongAxis(float deltaTime)
 		float deltaCamSpd = cameraSpd * deltaTime;
 		m_position += -deltaCamSpd * glm::vec3(-1, 0, 0);
 	}
-
 }

@@ -24,7 +24,6 @@ public:
 	CConstraint(CParticle* pA, CParticle* pB, int Type);
 	~CConstraint();
 
-	void LinkParticles(CParticle* pA, CParticle* pB);
 	void Update(float deltaTime);
 
 	void DebugRender(CCamera Camera, GLuint Shader);

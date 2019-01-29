@@ -12,7 +12,7 @@ uniform sampler2D Texture02;
 
 void main(){
 	//Normal maps
-	float scale = 2;
+	float scale = 1;
 	vec3 NewNormal = texture(Texture02, TexCoords * scale).rgb;
 	NewNormal = normalize(NewNormal * 2.0 - 1.0);
 	NewNormal = normalize(NewNormal * toTangentMat) ;

@@ -15,7 +15,6 @@ CConstraint::CConstraint(CParticle * pA, CParticle * pB, int Type)
 	/*Setup Buffers*/
 	glGenVertexArrays(1, &VertexArrayBuffer);
 	glGenBuffers(NUMOFBUFFERS, BufferArrayObjects);
-	
 }
 
 CConstraint::~CConstraint()
@@ -23,11 +22,6 @@ CConstraint::~CConstraint()
 
 }
 
-void CConstraint::LinkParticles(CParticle * pA, CParticle * pB)
-{
-	m_particleA = pA;
-	m_particleB = pB;
-}
 
 void CConstraint::Update(float deltaTime)
 {
@@ -36,29 +30,14 @@ void CConstraint::Update(float deltaTime)
 		/*Get distance from Paticle A to particle B*/
 		glm::vec3 pA_to_Pb = m_particleB->GetPosition() - m_particleA->GetPosition();
 		float distant = glm::length(pA_to_Pb);
-		//float distant = pA_to_Pb.length();
 
 		/*Find the correction force*/
 		glm::vec3 CorrectionVector = pA_to_Pb * (1 - m_restingLength / distant);
 		CorrectionVector *= .5f;
 
-		if (Type == STRETCH)
-		{
-			m_particleA->AddForce(CorrectionVector);
-			m_particleB->AddForce(-CorrectionVector);
-		}
-		else if (Type == SHEAR)
-		{
-			m_particleA->AddForce(CorrectionVector);
-			m_particleB->AddForce(-CorrectionVector);
-		}
-		else if (Type == BEND)
-		{
-			m_particleA->AddForce(CorrectionVector);
-			m_particleB->AddForce(-CorrectionVector);
-		}
+		m_particleA->AddForce(CorrectionVector);
+		m_particleB->AddForce(-CorrectionVector);
 	}
-
 }
 
 void CConstraint::DebugRender(CCamera Camera, GLuint Shader)

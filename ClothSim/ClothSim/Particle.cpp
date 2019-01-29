@@ -13,16 +13,19 @@ CParticle::~CParticle()
 
 void CParticle::AddForce(glm::vec3 force)
 {
+	/*Newtons second law*/
 	m_acceleration += force / m_mass;
 }
 
 void CParticle::Update(float deltaTime)
 {
+	float DAMPING = 0.97f;
+
 	if (m_moveable)
 	{
 		/*Verlet Integration*/
 		glm::vec3 Temp = m_position;
-		m_position = m_position + (m_position - m_oldPosition) * 0.97f + m_acceleration * (1.f/60.f) ;	//Probably gonna need damping in here
+		m_position = m_position + (m_position - m_oldPosition) * DAMPING + m_acceleration * (deltaTime); //Multiply by timestep size if you have one!
 		m_oldPosition = Temp;
 		m_acceleration = glm::vec3(0, 0, 0);
 	}
